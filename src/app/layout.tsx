@@ -23,6 +23,10 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Just in Case",
   },
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
   viewport: {
     width: "device-width",
     initialScale: 1,

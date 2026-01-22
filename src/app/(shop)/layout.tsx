@@ -10,14 +10,15 @@ export default function ShopLayout({
     return (
         <LanguageProvider>
             <div className="flex flex-col min-h-screen">
-                <header className="flex flex-col items-center justify-center py-16 border-b border-stone-200/50">
-                    <div className="relative w-[800px] h-[400px]">
+                <header className="flex flex-col items-center justify-center py-8 border-b border-stone-200/50">
+                    <div className="relative w-full max-w-[300px] aspect-[2/1]">
                         <Image
                             src="/images/logo.png"
                             alt="Just in Case"
                             fill
                             className="object-contain"
                             priority
+                            sizes="(max-width: 768px) 100vw, 300px"
                         />
                     </div>
                 </header>
