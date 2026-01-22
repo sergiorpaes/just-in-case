@@ -36,8 +36,16 @@ export default function SettingsPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(settings),
             });
-            if (res.ok) alert("Settings saved!");
-            else alert("Failed to save settings");
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                alert("Settings saved!");
+            } else if (data.warning) {
+                alert("⚠️ " + data.warning);
+            } else {
+                alert("Failed to save settings");
+            }
         } catch (error) {
             alert("Error saving settings");
         } finally {
