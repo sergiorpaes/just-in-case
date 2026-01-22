@@ -6,13 +6,35 @@ import path from 'path';
 const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
 
 async function getStripeKey() {
+    let mode = 'test';
+    let testSk = '';
+    let prodSk = '';
+
+    // 1. Try reading settings.json (Dev)
     try {
         const data = await fs.readFile(settingsPath, 'utf8');
         const settings = JSON.parse(data);
-        return settings.mode === 'test' ? settings.test_sk : settings.prod_sk;
+        mode = settings.mode || 'test';
+        testSk = settings.test_sk || '';
+        prodSk = settings.prod_sk || '';
     } catch {
-        return process.env.STRIPE_SECRET_KEY; // Fallback
+        // Ignore missing file
     }
+
+    // 2. Override with Environment Variables (Prod/Netlify)
+    if (process.env.NEXT_PUBLIC_APP_MODE) mode = process.env.NEXT_PUBLIC_APP_MODE;
+    if (process.env.STRIPE_TEST_SK) testSk = process.env.STRIPE_TEST_SK;
+    if (process.env.STRIPE_PROD_SK) prodSk = process.env.STRIPE_PROD_SK;
+
+    // 3. Select Key
+    const key = mode === 'test' ? testSk : prodSk;
+
+    // 4. Ultimate Fallback (Legacy)
+    if (!key || key.includes('PLACEHOLDER')) {
+        return process.env.STRIPE_SECRET_KEY;
+    }
+
+    return key;
 }
 
 export async function POST(req: Request) {
