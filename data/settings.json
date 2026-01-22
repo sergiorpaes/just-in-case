@@ -1,0 +1,8 @@
+{
+  "mode": "test",
+  "test_pk": "pk_test_51SqGqW4qIMJ1uy72Gjjipb8XqjedYE0Tcf8BmfsW3yViTZu0Uo2pcKBLIWsD9etG40gmnNzGoAevwblmyz2pV1Pl00sEW0fMDM",
+  "test_sk": "sk_test_PLACEHOLDER_DO_NOT_COMMIT",
+  "prod_pk": "",
+  "prod_sk": "",
+  "admin_password": "admin"
+}

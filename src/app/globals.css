@@ -1,11 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #F5F5DC;
-  --color-foreground: #5C4033;
-  --color-primary: #808000;
-  --color-secondary: #5C4033;
-  --color-accent: #808000;
+  --color-background: #FDFBF7;
+  /* Soft Pearl/Cream */
+  --color-foreground: #2C2C2C;
+  /* Dark Charcoal/Soft Black */
+  --color-primary: #6D4C41;
+  /* Deep Warm Brown/Espresso */
+  --color-secondary: #A1887F;
+  /* Soft Taupe */
+  --color-accent: #D4AF37;
+  /* Muted Gold */
 
   --font-sans: var(--font-montserrat);
   --font-handwriting: var(--font-dancing-script);
@@ -15,5 +20,15 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+
+  /* Hide Next.js Development Indicator */
+  nextjs-portal,
+  #nextjs-dev-tools-overlay,
+  [data-nextjs-toast] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 }

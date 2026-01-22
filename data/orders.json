@@ -1,1 +1,94 @@
-[]
+[
+  {
+    "id": "1769098515312",
+    "date": "2026-01-22T16:15:15.312Z",
+    "items": [
+      {
+        "id": "p1",
+        "name": "Bamboo Toothbrush",
+        "description": "Eco-friendly, biodegradable handle.",
+        "price": 3.5,
+        "image": "/images/toothbrush.png",
+        "stock": 10,
+        "quantity": 1
+      },
+      {
+        "id": "p5",
+        "name": "Mineral Water",
+        "description": "Still water, 500ml glass bottle.",
+        "price": 1.5,
+        "image": "/images/water.png",
+        "stock": 20,
+        "quantity": 5
+      },
+      {
+        "id": "p3",
+        "name": "USB-C Charger",
+        "description": "Fast charging 20W adapter.",
+        "price": 12,
+        "image": "/images/charger.png",
+        "stock": 5,
+        "quantity": 1
+      }
+    ],
+    "total": 23,
+    "method": "cash",
+    "status": "pending_payment"
+  },
+  {
+    "id": "1769099259855",
+    "date": "2026-01-22T16:27:39.855Z",
+    "items": [
+      {
+        "id": "p2",
+        "name": "Travel Toothpaste",
+        "description": "Minty fresh, 50ml.",
+        "price": 2,
+        "image": "/images/toothpaste.png",
+        "stock": 15,
+        "quantity": 1
+      }
+    ],
+    "total": 2,
+    "method": "cash",
+    "status": "pending_payment"
+  },
+  {
+    "id": "cs_test_a1MpIKyPJeU5LobUxPKBRnVTBclWUCcuHO1dNqXGnFlDk9XVDk3BFNGLGi",
+    "date": "2026-01-22T18:39:52.912Z",
+    "items": {
+      "p2": 1
+    },
+    "total": 2,
+    "method": "stripe",
+    "status": "paid"
+  },
+  {
+    "id": "cs_test_a1wJb8ZQ8laiWd7x0qvidla906KcXG28srxrJ0Pc5wI3RtinJ6E4Rc3lwS",
+    "date": "2026-01-22T18:40:34.367Z",
+    "items": {
+      "p2": 1
+    },
+    "total": 2,
+    "method": "stripe",
+    "status": "paid"
+  },
+  {
+    "id": "1769108081275",
+    "date": "2026-01-22T18:54:41.275Z",
+    "items": [
+      {
+        "id": "p4",
+        "name": "Sleep Mask",
+        "description": "Silk, comfortable and light-blocking.",
+        "price": 5,
+        "image": "/images/mask.png",
+        "stock": 8,
+        "quantity": 1
+      }
+    ],
+    "total": 5,
+    "method": "cash",
+    "status": "pending_payment"
+  }
+]

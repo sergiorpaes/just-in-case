@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Montserrat, Dancing_Script } from "next/font/google";
 import "./globals.css";
-import { ShoppingBag } from "lucide-react";
+import { promises as fs } from 'fs';
+import path from 'path';
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -16,28 +17,50 @@ const dancingScript = Dancing_Script({
 export const metadata: Metadata = {
   title: "Just in Case",
   description: "Essentials for your stay",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Just in Case",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 };
 
-export default function RootLayout({
+async function getIsTestMode() {
+  try {
+    const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
+    const data = await fs.readFile(settingsPath, 'utf8');
+    const settings = JSON.parse(data);
+    return settings.mode === 'test';
+  } catch {
+    return false;
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isTestMode = await getIsTestMode();
+
   return (
     <html lang="en">
       <body
         className={`${montserrat.variable} ${dancingScript.variable} antialiased font-sans bg-background text-foreground`}
       >
-        <header className="flex flex-col items-center justify-center py-8 border-b border-black/5">
-          <div className="flex items-center gap-3">
-            <ShoppingBag className="w-8 h-8 text-primary" strokeWidth={1.5} />
-            <div className="text-4xl font-handwriting text-primary pt-2">Just in Case</div>
+        {children}
+
+        {isTestMode && (
+          <div className="fixed bottom-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded shadow-md z-[60] opacity-80 pointer-events-none">
+            TEST MODE
           </div>
-          <p className="text-[0.65rem] uppercase tracking-[0.2em] text-stone-500 mt-2">Essentials for your stay</p>
-        </header>
-        <main className="min-h-screen max-w-md mx-auto px-4 py-6">
-          {children}
-        </main>
+        )}
       </body>
     </html>
   );

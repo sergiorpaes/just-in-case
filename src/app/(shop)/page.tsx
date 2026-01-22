@@ -1,4 +1,5 @@
 import Store from "@/components/Store";
+import ShopHeader from "@/components/ShopHeader";
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -7,7 +8,9 @@ async function getProducts() {
     // Attempt to read from project root data folder
     const jsonDirectory = path.join(process.cwd(), 'data');
     const fileContents = await fs.readFile(path.join(jsonDirectory, 'products.json'), 'utf8');
-    return JSON.parse(fileContents);
+    const products = JSON.parse(fileContents);
+    // Sort by price ascending (cheaper first)
+    return products.sort((a: any, b: any) => parseFloat(a.price) - parseFloat(b.price));
   } catch (e) {
     console.error("Failed to load products:", e);
     return [];
@@ -21,12 +24,7 @@ export default async function Home() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center space-y-2 py-4">
-        <h2 className="text-2xl font-bold text-foreground">Welcome Guest</h2>
-        <p className="text-stone-600">
-          Did you forget something? We've got you covered with a curated selection of essentials.
-        </p>
-      </div>
+      <ShopHeader />
 
       {products.length === 0 && (
         <div className="p-4 bg-red-50 text-red-800 rounded-lg text-sm text-left space-y-2 border border-red-200">

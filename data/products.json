@@ -1,42 +1,50 @@
 [
   {
-    "id": "p1",
-    "name": "Bamboo Toothbrush",
-    "description": "Eco-friendly, biodegradable handle.",
-    "price": 3.50,
-    "image": "/images/toothbrush.png",
-    "stock": 10
-  },
-  {
     "id": "p2",
     "name": "Travel Toothpaste",
     "description": "Minty fresh, 50ml.",
-    "price": 2.00,
-    "image": "/images/toothpaste.png",
-    "stock": 15
+    "price": 2,
+    "image": "/images/uploads/upload_1769107154714_1595.webp",
+    "stock": 2
   },
   {
     "id": "p3",
     "name": "USB-C Charger",
     "description": "Fast charging 20W adapter.",
-    "price": 12.00,
+    "price": 12,
     "image": "/images/charger.png",
-    "stock": 5
+    "stock": 4
   },
   {
     "id": "p4",
     "name": "Sleep Mask",
     "description": "Silk, comfortable and light-blocking.",
-    "price": 5.00,
+    "price": 5,
     "image": "/images/mask.png",
-    "stock": 8
+    "stock": 7
   },
   {
     "id": "p5",
     "name": "Mineral Water",
     "description": "Still water, 500ml glass bottle.",
-    "price": 1.50,
+    "price": 1.5,
     "image": "/images/water.png",
-    "stock": 20
+    "stock": 15
+  },
+  {
+    "id": "p1769107300545",
+    "name": "Nissin Lamen",
+    "description": "Nissin Lamen",
+    "price": 5,
+    "stock": 5,
+    "image": "https://www.oceanicsupermarket.com/wp-content/uploads/2025/04/Nissin-Lamen-Sabor-Picanha-85g.jpg"
+  },
+  {
+    "id": "p1769108153872",
+    "name": "Portuguese Wine",
+    "description": "Portuguese Wine",
+    "price": 20,
+    "stock": 4,
+    "image": "https://tse2.mm.bing.net/th/id/OIP.F04PqSQna-w8ooSOhPD0VAHaHa?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3"
   }
 ]

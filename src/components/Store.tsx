@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Plus, Minus, ShoppingBag, X, CreditCard, Banknote } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
-
-// Make sure to set this env variable in your .env.local
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { useLanguage } from "../contexts/LanguageContext";
 
 type Product = {
     id: string;
@@ -20,9 +18,24 @@ type Product = {
 type CartItem = Product & { quantity: number };
 
 export default function Store({ products }: { products: Product[] }) {
+    const { t } = useLanguage();
     const [cart, setCart] = useState<CartItem[]>([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    // Dynamic stripe loaded from API
+    const [stripe, setStripe] = useState<Stripe | null>(null);
+
+    // Initialise Stripe
+    useEffect(() => {
+        fetch("/api/config/stripe")
+            .then(res => res.json())
+            .then(async data => {
+                if (data.publishableKey) {
+                    const stripeInstance = await loadStripe(data.publishableKey);
+                    setStripe(stripeInstance);
+                }
+            });
+    }, []);
 
     const addToCart = (product: Product) => {
         setCart((prev) => {
@@ -68,23 +81,24 @@ export default function Store({ products }: { products: Product[] }) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ items: cart }),
             });
-            const { sessionId, error } = await response.json();
+            const { url, error } = await response.json();
             if (error) {
-                alert("Payment Error: " + error);
+                alert(t('error_payment') + ": " + error);
                 setIsProcessing(false);
                 return;
             }
-            const stripe = await stripePromise;
-            if (stripe) await (stripe as any).redirectToCheckout({ sessionId });
+            if (url) {
+                window.location.href = url;
+            }
         } catch (err) {
             console.error(err);
-            alert("Something went wrong.");
+            alert(t('error_generic'));
             setIsProcessing(false);
         }
     };
 
     const handleCashCheckout = async () => {
-        if (!confirm("Confirm that you will leave cash in the box?")) return;
+        if (!confirm(t('confirm_cash'))) return;
         setIsProcessing(true);
         try {
             const response = await fetch("/api/cash", {
@@ -101,7 +115,7 @@ export default function Store({ products }: { products: Product[] }) {
             }
         } catch (err) {
             console.error(err);
-            alert("Something went wrong.");
+            alert(t('error_generic'));
             setIsProcessing(false);
         }
     };
@@ -121,7 +135,7 @@ export default function Store({ products }: { products: Product[] }) {
                             <h3 className="font-semibold text-lg leading-tight">{product.name}</h3>
                             <p className="text-sm text-stone-500 mb-2">{product.description}</p>
                             <div className="flex items-center justify-between">
-                                <span className="font-bold text-primary text-xl">${product.price.toFixed(2)}</span>
+                                <span className="font-bold text-primary text-xl">€{product.price.toFixed(2)}</span>
                                 {product.stock > 0 ? (
                                     <button
                                         onClick={() => addToCart(product)}
@@ -130,7 +144,7 @@ export default function Store({ products }: { products: Product[] }) {
                                         <Plus size={18} />
                                     </button>
                                 ) : (
-                                    <span className="text-xs font-bold text-red-400 uppercase tracking-wider">Out</span>
+                                    <span className="text-xs font-bold text-red-400 uppercase tracking-wider">{t('out_of_stock')}</span>
                                 )}
                             </div>
                         </div>
@@ -147,9 +161,9 @@ export default function Store({ products }: { products: Product[] }) {
                     >
                         <div className="flex items-center gap-2">
                             <span className="bg-white/20 px-2 py-0.5 rounded-full text-sm">{cartCount}</span>
-                            <span>View Cart</span>
+                            <span>{t('view_cart')}</span>
                         </div>
-                        <span>${cartTotal.toFixed(2)}</span>
+                        <span>€{cartTotal.toFixed(2)}</span>
                     </button>
                 </div>
             )}
@@ -162,7 +176,7 @@ export default function Store({ products }: { products: Product[] }) {
 
                     <div className="relative bg-[#F5F5DC] w-full max-w-md mx-auto rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl max-h-[90vh] flex flex-col animate-in slide-in-from-bottom duration-300">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-handwriting text-primary">Your Essentials</h2>
+                            <h2 className="text-2xl font-handwriting text-primary">{t('your_essentials')}</h2>
                             <button onClick={() => setIsCartOpen(false)} className="p-2 bg-stone-200 rounded-full hover:bg-stone-300">
                                 <X size={20} />
                             </button>
@@ -173,7 +187,7 @@ export default function Store({ products }: { products: Product[] }) {
                                 <div key={item.id} className="flex justify-between items-center bg-white p-3 rounded-xl">
                                     <div className="flex flex-col">
                                         <span className="font-semibold">{item.name}</span>
-                                        <span className="text-sm text-stone-500">${item.price.toFixed(2)}</span>
+                                        <span className="text-sm text-stone-500">€{item.price.toFixed(2)}</span>
                                     </div>
                                     <div className="flex items-center gap-3 bg-stone-100 rounded-full px-2 py-1">
                                         <button onClick={() => updateQuantity(item.id, -1)} className="p-1"><Minus size={14} /></button>
@@ -182,29 +196,33 @@ export default function Store({ products }: { products: Product[] }) {
                                     </div>
                                 </div>
                             ))}
-                            {cart.length === 0 && <p className="text-center text-stone-400 py-8">Your basket is empty.</p>}
+                            {cart.length === 0 && <p className="text-center text-stone-400 py-8">{t('empty_cart')}</p>}
                         </div>
 
                         {cart.length > 0 && (
                             <div className="space-y-3">
                                 <div className="flex justify-between text-xl font-bold mb-4 border-t border-stone-200 pt-4">
-                                    <span>Total</span>
-                                    <span>${cartTotal.toFixed(2)}</span>
+                                    <span>{t('total')}</span>
+                                    <span>€{cartTotal.toFixed(2)}</span>
+                                </div>
+
+                                <div className="text-center text-sm text-stone-500 mb-2">
+                                    {t('checkout_secure_msg')}
                                 </div>
 
                                 <button
                                     disabled={isProcessing}
                                     onClick={handleStripeCheckout}
-                                    className="w-full py-3.5 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 flex items-center justify-center gap-2 disabled:opacity-50"
+                                    className="w-full py-3.5 bg-primary text-white rounded-xl font-bold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
                                 >
-                                    <CreditCard size={18} /> Pay with Card
+                                    <CreditCard size={18} /> {t('pay_card')}
                                 </button>
                                 <button
                                     disabled={isProcessing}
                                     onClick={handleCashCheckout}
-                                    className="w-full py-3.5 bg-primary text-white rounded-xl font-bold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50"
+                                    className="w-full py-3.5 bg-secondary text-white rounded-xl font-bold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
                                 >
-                                    <Banknote size={18} /> Pay Cash
+                                    <Banknote size={18} /> {t('pay_cash')}
                                 </button>
                             </div>
                         )}
