@@ -1,0 +1,42 @@
+[
+  {
+    "id": "p1",
+    "name": "Bamboo Toothbrush",
+    "description": "Eco-friendly, biodegradable handle.",
+    "price": 3.50,
+    "image": "/images/toothbrush.png",
+    "stock": 10
+  },
+  {
+    "id": "p2",
+    "name": "Travel Toothpaste",
+    "description": "Minty fresh, 50ml.",
+    "price": 2.00,
+    "image": "/images/toothpaste.png",
+    "stock": 15
+  },
+  {
+    "id": "p3",
+    "name": "USB-C Charger",
+    "description": "Fast charging 20W adapter.",
+    "price": 12.00,
+    "image": "/images/charger.png",
+    "stock": 5
+  },
+  {
+    "id": "p4",
+    "name": "Sleep Mask",
+    "description": "Silk, comfortable and light-blocking.",
+    "price": 5.00,
+    "image": "/images/mask.png",
+    "stock": 8
+  },
+  {
+    "id": "p5",
+    "name": "Mineral Water",
+    "description": "Still water, 500ml glass bottle.",
+    "price": 1.50,
+    "image": "/images/water.png",
+    "stock": 20
+  }
+]
