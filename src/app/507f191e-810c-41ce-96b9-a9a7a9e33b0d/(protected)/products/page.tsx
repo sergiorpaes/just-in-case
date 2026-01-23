@@ -13,18 +13,52 @@ export default function NewProductPage() {
         description: "",
         price: "",
         stock: "",
-        image: ""
+        image: "",
+        nameI18n: { en: "", pt: "", es: "", fr: "", de: "", nl: "", ru: "" } as Record<string, string>,
+        descriptionI18n: { en: "", pt: "", es: "", fr: "", de: "", nl: "", ru: "" } as Record<string, string>
     });
+    const [activeLang, setActiveLang] = useState('en');
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        if (name === 'price' || name === 'stock' || name === 'image') {
+            setFormData({ ...formData, [name]: value });
+        } else {
+            // Handle i18n
+            if (name === 'name') {
+                setFormData(prev => ({
+                    ...prev,
+                    nameI18n: { ...prev.nameI18n, [activeLang]: value },
+                    name: activeLang === 'en' ? value : prev.name
+                }));
+            } else if (name === 'description') {
+                setFormData(prev => ({
+                    ...prev,
+                    descriptionI18n: { ...prev.descriptionI18n, [activeLang]: value },
+                    description: activeLang === 'en' ? value : prev.description
+                }));
+            }
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
+        const body = {
+            ...formData,
+            price: parseFloat(formData.price),
+            stock: parseInt(formData.stock),
+            // Ensure fallback if EN is empty (shouldn't be)
+            name: formData.nameI18n.en || formData.name,
+            description: formData.descriptionI18n.en || formData.description
+        };
+
         try {
             const res = await fetch("/api/admin/products", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(body),
             });
 
             if (res.ok) {
@@ -51,27 +85,47 @@ export default function NewProductPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
+
+                {/* Language Tabs */}
+                <div className="flex gap-2 border-b border-gray-100 pb-2 mb-2 overflow-x-auto">
+                    {(['en', 'pt', 'es', 'fr', 'de', 'nl', 'ru'] as const).map(lang => (
+                        <button
+                            key={lang}
+                            type="button"
+                            onClick={() => setActiveLang(lang)}
+                            className={`px-4 py-1 rounded-full text-sm font-bold uppercase transition flex-shrink-0 ${activeLang === lang
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                }`}
+                        >
+                            {lang}
+                        </button>
+                    ))}
+                </div>
+
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Product Name</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Product Name ({activeLang.toUpperCase()})</label>
                     <input
-                        required
+                        required={activeLang === 'en'}
                         type="text"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        name="name"
+                        value={formData.nameI18n[activeLang] || ""}
+                        onChange={handleInputChange}
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                        placeholder="e.g. Bamboo Toothbrush"
+                        placeholder={`Name in ${activeLang}`}
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Description ({activeLang.toUpperCase()})</label>
                     <textarea
-                        required
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        required={activeLang === 'en'}
+                        name="description"
+                        value={formData.descriptionI18n[activeLang] || ""}
+                        onChange={handleInputChange}
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                         rows={3}
-                        placeholder="Short description of the item..."
+                        placeholder={`Description in ${activeLang}`}
                     />
                 </div>
 
