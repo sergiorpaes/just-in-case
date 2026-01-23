@@ -16,7 +16,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         const browserLang = navigator.language.split("-")[0];
-        if (["pt", "es", "fr"].includes(browserLang)) {
+        if (["pt", "es", "fr", "de", "nl", "ru"].includes(browserLang)) {
             setLanguage(browserLang as LocaleKey);
         }
     }, []);

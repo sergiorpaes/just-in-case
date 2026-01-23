@@ -13,12 +13,14 @@ type Product = {
     price: number;
     image: string;
     stock: number;
+    nameI18n?: any;
+    descriptionI18n?: any;
 };
 
 type CartItem = Product & { quantity: number };
 
 export default function Store({ products }: { products: Product[] }) {
-    const { t } = useLanguage();
+    const { language, t } = useLanguage();
     const [cart, setCart] = useState<CartItem[]>([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -123,33 +125,38 @@ export default function Store({ products }: { products: Product[] }) {
     return (
         <>
             <div className="grid grid-cols-1 gap-6 pb-24">
-                {products.map((product) => (
-                    <div key={product.id} className="bg-white rounded-2xl p-4 shadow-sm flex gap-4 items-center">
-                        <div className="relative w-24 h-24 flex-shrink-0 bg-stone-100 rounded-xl overflow-hidden">
-                            {/* Using a placeholder for now if image fails, or real image */}
-                            <div className="absolute inset-0 flex items-center justify-center text-xs text-stone-400">
-                                {product.image ? <Image src={product.image} alt={product.name} fill className="object-cover" /> : "No Image"}
+                {products.map((product) => {
+                    // Resolve Language
+                    const localizedName = (product.nameI18n && product.nameI18n[language]) || product.name;
+                    const localizedDesc = (product.descriptionI18n && product.descriptionI18n[language]) || product.description;
+
+                    return (
+                        <div key={product.id} className="bg-white rounded-2xl p-4 shadow-sm flex gap-4 items-center">
+                            <div className="relative w-24 h-24 flex-shrink-0 bg-stone-100 rounded-xl overflow-hidden">
+                                {/* Using a placeholder for now if image fails, or real image */}
+                                <div className="absolute inset-0 flex items-center justify-center text-xs text-stone-400">
+                                    {product.image ? <Image src={product.image} alt={product.name} fill className="object-cover" /> : "No Image"}
+                                </div>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="font-semibold text-lg leading-tight">{localizedName}</h3>
+                                <p className="text-sm text-stone-500 mb-2">{localizedDesc}</p>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-bold text-primary text-xl">€{product.price.toFixed(2)}</span>
+                                    {product.stock > 0 ? (
+                                        <button
+                                            onClick={() => addToCart(product)}
+                                            className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg active:scale-90 transition"
+                                        >
+                                            <Plus size={18} />
+                                        </button>
+                                    ) : (
+                                        <span className="text-xs font-bold text-red-400 uppercase tracking-wider">{t('out_of_stock')}</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                        <div className="flex-1">
-                            <h3 className="font-semibold text-lg leading-tight">{product.name}</h3>
-                            <p className="text-sm text-stone-500 mb-2">{product.description}</p>
-                            <div className="flex items-center justify-between">
-                                <span className="font-bold text-primary text-xl">€{product.price.toFixed(2)}</span>
-                                {product.stock > 0 ? (
-                                    <button
-                                        onClick={() => addToCart(product)}
-                                        className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg active:scale-90 transition"
-                                    >
-                                        <Plus size={18} />
-                                    </button>
-                                ) : (
-                                    <span className="text-xs font-bold text-red-400 uppercase tracking-wider">{t('out_of_stock')}</span>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                    })}
             </div>
 
             {/* Floating Cart Button */}
@@ -183,19 +190,22 @@ export default function Store({ products }: { products: Product[] }) {
                         </div>
 
                         <div className="flex-1 overflow-y-auto space-y-4 mb-6">
-                            {cart.map((item) => (
-                                <div key={item.id} className="flex justify-between items-center bg-white p-3 rounded-xl">
-                                    <div className="flex flex-col">
-                                        <span className="font-semibold">{item.name}</span>
-                                        <span className="text-sm text-stone-500">€{item.price.toFixed(2)}</span>
+                            {cart.map((item) => {
+                                const localizedName = (item.nameI18n && item.nameI18n[language]) || item.name;
+                                return (
+                                    <div key={item.id} className="flex justify-between items-center bg-white p-3 rounded-xl">
+                                        <div className="flex flex-col">
+                                            <span className="font-semibold">{localizedName}</span>
+                                            <span className="text-sm text-stone-500">€{item.price.toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 bg-stone-100 rounded-full px-2 py-1">
+                                            <button onClick={() => updateQuantity(item.id, -1)} className="p-1"><Minus size={14} /></button>
+                                            <span className="font-mono text-sm w-4 text-center">{item.quantity}</span>
+                                            <button onClick={() => updateQuantity(item.id, 1)} className="p-1"><Plus size={14} /></button>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-3 bg-stone-100 rounded-full px-2 py-1">
-                                        <button onClick={() => updateQuantity(item.id, -1)} className="p-1"><Minus size={14} /></button>
-                                        <span className="font-mono text-sm w-4 text-center">{item.quantity}</span>
-                                        <button onClick={() => updateQuantity(item.id, 1)} className="p-1"><Plus size={14} /></button>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                             {cart.length === 0 && <p className="text-center text-stone-400 py-8">{t('empty_cart')}</p>}
                         </div>
 

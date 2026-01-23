@@ -17,6 +17,8 @@ model Product {
   price       Float
   stock       Int
   image       String
+  nameI18n    Json?    // { en: "Name", pt: "Nome" }
+  descriptionI18n Json? // { en: "Desc", pt: "Desc" }
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
