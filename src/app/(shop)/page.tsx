@@ -18,10 +18,11 @@ async function getProducts() {
 
 export default async function Home() {
   const products = await getProducts();
+  const settings = await prisma.settings.findUnique({ where: { id: 'default' } });
 
   return (
     <div className="space-y-6">
-      <ShopHeader />
+      <ShopHeader whatsapp={settings?.whatsapp} />
 
       {products.length === 0 && (
         <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg text-sm text-center">
