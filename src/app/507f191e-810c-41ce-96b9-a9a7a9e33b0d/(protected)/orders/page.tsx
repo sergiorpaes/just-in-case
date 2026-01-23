@@ -106,8 +106,23 @@ export default function OrdersPage() {
     const exportCSV = () => {
         const headers = ["Order ID,Date,Method,Status,Total,Items"];
         const rows = sortedOrders.map(o => {
-            // Simplified item string
-            const itemsStr = o.items && !Array.isArray(o.items) ? JSON.stringify(o.items).replace(/,/g, ';') : "Check Details";
+            // Format items into a readable string "2x Wine; 1x Chips"
+            let itemsStr = "";
+            if (o.items) {
+                const itemsList = Array.isArray(o.items)
+                    ? o.items
+                    : Object.entries(o.items).map(([id, qty]) => ({ id, quantity: qty }));
+
+                itemsStr = itemsList.map((item: any) => {
+                    const id = item.id;
+                    const qty = item.quantity;
+                    const product = productMap[id] || (item.name ? item : null);
+                    const name = product ? product.name : id; // Use Name if found, else ID
+                    return `${qty}x ${name}`;
+                }).join("; ");
+            } else {
+                itemsStr = "No Details";
+            }
 
             return [
                 o.id,
