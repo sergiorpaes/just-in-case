@@ -67,12 +67,17 @@ export async function POST(req: Request) {
                 }
 
                 // Create Order
-                // Check if exists first to be idempotent
-                const existing = await tx.order.findUnique({ where: { id: session.id } });
+                // Check if exists first to be idempotent (by stripeSessionId now)
+                const existing = await tx.order.findUnique({
+                    where: { stripeSessionId: session.id }
+                });
+
                 if (!existing) {
+                    const numericId = Math.floor(10000000 + Math.random() * 90000000).toString();
                     await tx.order.create({
                         data: {
-                            id: session.id,
+                            id: numericId,
+                            stripeSessionId: session.id,
                             total: session.amount_total ? session.amount_total / 100 : 0,
                             status: 'paid',
                             method: 'stripe',

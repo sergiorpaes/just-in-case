@@ -25,9 +25,12 @@ export async function POST(req: Request) {
             }
 
             // Create Order
+            // Generate simple 8-digit numeric ID
+            const numericId = Math.floor(10000000 + Math.random() * 90000000).toString();
+
             await tx.order.create({
                 data: {
-                    id: Date.now().toString(),
+                    id: numericId,
                     date: new Date().toISOString(),
                     total,
                     status: 'pending_payment',
@@ -37,7 +40,7 @@ export async function POST(req: Request) {
             });
         });
 
-        return NextResponse.json({ success: true, orderId: 'cash-' + Date.now() });
+        return NextResponse.json({ success: true, orderId: 'cash-success' });
 
     } catch (err: any) {
         console.error("Cash order error:", err);

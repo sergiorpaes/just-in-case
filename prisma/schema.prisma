@@ -22,8 +22,9 @@ model Product {
 }
 
 model Order {
-  id        String   @id
-  date      DateTime @default(now())
+  id              String   @id
+  stripeSessionId String?  @unique
+  date            DateTime @default(now())
   total     Float
   status    String
   method    String
