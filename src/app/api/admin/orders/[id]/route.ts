@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 
 export async function PUT(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const body = await req.json();
@@ -13,10 +13,8 @@ export async function PUT(
             return NextResponse.json({ error: 'Status is required' }, { status: 400 });
         }
 
-        // Use params.id directly. 
-        // Note: In Next.js 15 params might need awaiting, but sticking to standard pattern for now.
-        // If this is Next.js < 15, params is object.
-        const id = params.id;
+        // Await params in Next.js 15
+        const { id } = await params;
 
         const order = await prisma.order.update({
             where: { id },
