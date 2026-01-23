@@ -24,6 +24,8 @@ export async function POST(req: Request) {
                 price: Number(body.price) || 0,
                 stock: Number(body.stock) || 0,
                 image: body.image || '',
+                nameI18n: body.nameI18n || {},
+                descriptionI18n: body.descriptionI18n || {}
             }
         });
 
@@ -31,5 +33,29 @@ export async function POST(req: Request) {
     } catch (e) {
         console.error(e);
         return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
+    }
+}
+
+export async function PUT(req: Request) {
+    try {
+        const body = await req.json();
+
+        const updatedProduct = await prisma.product.update({
+            where: { id: body.id },
+            data: {
+                name: body.name,
+                description: body.description,
+                price: Number(body.price) || 0,
+                stock: Number(body.stock) || 0,
+                image: body.image || '',
+                nameI18n: body.nameI18n || {},
+                descriptionI18n: body.descriptionI18n || {}
+            }
+        });
+
+        return NextResponse.json(updatedProduct);
+    } catch (e) {
+        console.error(e);
+        return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
     }
 }
