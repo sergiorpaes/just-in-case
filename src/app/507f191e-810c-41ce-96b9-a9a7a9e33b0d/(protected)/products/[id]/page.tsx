@@ -18,18 +18,18 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         description: "",
         price: "",
         stock: "",
-        image: ""
+        image: "",
+        nameI18n: { en: "", pt: "", es: "", fr: "", de: "", nl: "", ru: "" } as Record<string, string>,
+        descriptionI18n: { en: "", pt: "", es: "", fr: "", de: "", nl: "", ru: "" } as Record<string, string>
     });
+    const [activeLang, setActiveLang] = useState('en');
+
+    // Helper to safely get i18n value
+    const getI18nVal = (source: any, lang: string) => source?.[lang] || "";
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                // Ensure we query for the specific ID, though API returns list by default, 
-                // we'll filter or if we had a specific GET /api/products/[id] we'd use that.
-                // Re-using the list endpoint for simplicity or assume we build the single GET.
-                // Actually, the PUT route exists, but let's see if we can GET specific.
-                // We'll just fetch all and filter for now to save a route creation, or create specific GET.
-                // Let's create specific GET in the route first? No, let's just fetch all for now, it's small data.
                 const res = await fetch("/api/admin/products");
                 const products = await res.json();
                 const product = products.find((p: any) => p.id === id);
@@ -40,7 +40,25 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                         description: product.description,
                         price: product.price.toString(),
                         stock: product.stock.toString(),
-                        image: product.image
+                        image: product.image,
+                        nameI18n: {
+                            en: getI18nVal(product.nameI18n, 'en') || product.name,
+                            pt: getI18nVal(product.nameI18n, 'pt'),
+                            es: getI18nVal(product.nameI18n, 'es'),
+                            fr: getI18nVal(product.nameI18n, 'fr'),
+                            de: getI18nVal(product.nameI18n, 'de'),
+                            nl: getI18nVal(product.nameI18n, 'nl'),
+                            ru: getI18nVal(product.nameI18n, 'ru'),
+                        },
+                        descriptionI18n: {
+                            en: getI18nVal(product.descriptionI18n, 'en') || product.description,
+                            pt: getI18nVal(product.descriptionI18n, 'pt'),
+                            es: getI18nVal(product.descriptionI18n, 'es'),
+                            fr: getI18nVal(product.descriptionI18n, 'fr'),
+                            de: getI18nVal(product.descriptionI18n, 'de'),
+                            nl: getI18nVal(product.descriptionI18n, 'nl'),
+                            ru: getI18nVal(product.descriptionI18n, 'ru'),
+                        }
                     });
                 } else {
                     alert("Product not found");
@@ -56,15 +74,45 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         if (id) fetchProduct();
     }, [id, router]);
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        if (name === 'price' || name === 'stock' || name === 'image') {
+            setFormData({ ...formData, [name]: value });
+        } else {
+            if (name === 'name') {
+                setFormData(prev => ({
+                    ...prev,
+                    nameI18n: { ...prev.nameI18n, [activeLang]: value },
+                    name: activeLang === 'en' ? value : prev.name
+                }));
+            } else if (name === 'description') {
+                setFormData(prev => ({
+                    ...prev,
+                    descriptionI18n: { ...prev.descriptionI18n, [activeLang]: value },
+                    description: activeLang === 'en' ? value : prev.description
+                }));
+            }
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
+
+        const body = {
+            ...formData,
+            id,
+            price: parseFloat(formData.price),
+            stock: parseInt(formData.stock),
+            name: formData.nameI18n.en || formData.name,
+            description: formData.descriptionI18n.en || formData.description
+        };
 
         try {
             const res = await fetch(`/api/admin/products/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(body),
             });
 
             if (res.ok) {
@@ -93,23 +141,43 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
+
+                {/* Language Tabs */}
+                <div className="flex gap-2 border-b border-gray-100 pb-2 mb-2 overflow-x-auto">
+                    {(['en', 'pt', 'es', 'fr', 'de', 'nl', 'ru'] as const).map(lang => (
+                        <button
+                            key={lang}
+                            type="button"
+                            onClick={() => setActiveLang(lang)}
+                            className={`px-4 py-1 rounded-full text-sm font-bold uppercase transition flex-shrink-0 ${activeLang === lang
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                }`}
+                        >
+                            {lang}
+                        </button>
+                    ))}
+                </div>
+
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Product Name</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Product Name ({activeLang.toUpperCase()})</label>
                     <input
-                        required
+                        required={activeLang === 'en'}
                         type="text"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        name="name"
+                        value={formData.nameI18n[activeLang] || ""}
+                        onChange={handleInputChange}
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Description ({activeLang.toUpperCase()})</label>
                     <textarea
-                        required
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        required={activeLang === 'en'}
+                        name="description"
+                        value={formData.descriptionI18n[activeLang] || ""}
+                        onChange={handleInputChange}
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                         rows={3}
                     />
