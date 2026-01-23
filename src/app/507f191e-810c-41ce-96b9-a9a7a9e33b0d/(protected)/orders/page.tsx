@@ -64,7 +64,7 @@ export default function OrdersPage() {
                                             onClick={() => setSelectedOrder(order)}
                                             className="text-blue-600 hover:text-blue-800 font-medium underline"
                                         >
-                                            #{order.id.substring(0, 8)}...
+                                            #{order.id}
                                         </button>
                                     </td>
                                     <td className="p-4 text-gray-900">{formatDate(order.date)}</td>
@@ -106,7 +106,7 @@ export default function OrdersPage() {
                             <div className="flex justify-between items-end border-b border-gray-100 pb-4">
                                 <div>
                                     <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold">Order ID</p>
-                                    <p className="font-mono text-sm">{selectedOrder.id}</p>
+                                    <p className="font-mono text-xl font-bold">{selectedOrder.id}</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold">Total</p>
@@ -117,8 +117,16 @@ export default function OrdersPage() {
                             <div>
                                 <h3 className="text-sm text-gray-500 uppercase tracking-wider font-semibold mb-3">Items</h3>
                                 <div className="space-y-2">
-                                    {selectedOrder.items && Object.entries(selectedOrder.items).map(([id, qty]) => {
-                                        const product = productMap[id];
+                                    {selectedOrder.items && (Array.isArray(selectedOrder.items)
+                                        ? selectedOrder.items
+                                        : Object.entries(selectedOrder.items).map(([id, qty]) => ({ id, quantity: qty }))
+                                    ).map((item: any) => {
+                                        // Handle both Array (full object) and Map (reconstructed) formats
+                                        const id = item.id;
+                                        const qty = item.quantity;
+                                        // If product is in map use it, else if item has name use it (legacy/cash)
+                                        const product = productMap[id] || (item.name ? item : null);
+
                                         return (
                                             <div key={id} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
                                                 <div className="flex items-center gap-3">
@@ -130,7 +138,7 @@ export default function OrdersPage() {
                                                         <p className="text-xs text-gray-500 font-mono">ID: {id}</p>
                                                     </div>
                                                 </div>
-                                                <span className="font-bold text-gray-700">x{qty as number}</span>
+                                                <span className="font-bold text-gray-700">x{qty}</span>
                                             </div>
                                         );
                                     })}
