@@ -14,6 +14,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                 price: body.price ? Number(body.price) : undefined,
                 stock: body.stock ? Number(body.stock) : undefined,
                 image: body.image,
+                nameI18n: body.nameI18n || {},
+                descriptionI18n: body.descriptionI18n || {}
             }
         });
 
