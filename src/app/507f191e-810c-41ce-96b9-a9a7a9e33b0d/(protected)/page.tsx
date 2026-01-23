@@ -55,7 +55,7 @@ export default function AdminDashboard() {
                     <p className="text-gray-500">Manage your store inventory</p>
                 </div>
                 <Link
-                    href="/admin/products/new"
+                    href="/507f191e-810c-41ce-96b9-a9a7a9e33b0d/products"
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:bg-blue-700 transition"
                 >
                     <Plus size={18} /> Add Product
@@ -98,7 +98,7 @@ export default function AdminDashboard() {
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
                                         <Link
-                                            href={`/admin/products/${product.id}`}
+                                            href={`/507f191e-810c-41ce-96b9-a9a7a9e33b0d/products/${product.id}`}
                                             className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
                                             title="Edit"
                                         >
