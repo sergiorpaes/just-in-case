@@ -41,7 +41,8 @@ export async function GET() {
             test_sk: settings.test_sk ? '***' : '',
             prod_pk: settings.prod_pk,
             prod_sk: settings.prod_sk ? '***' : '',
-            has_password: true
+            has_password: true,
+            whatsapp: settings.whatsapp
         });
     } catch (e) {
         console.error("Settings GET error:", e);
@@ -62,6 +63,7 @@ export async function POST(req: Request) {
         if (body.prod_pk !== undefined) updateData.prod_pk = body.prod_pk;
         if (body.prod_sk && !body.prod_sk.includes('***')) updateData.prod_sk = body.prod_sk;
         if (body.new_password) updateData.admin_password = body.new_password;
+        if (body.whatsapp !== undefined) updateData.whatsapp = body.whatsapp;
 
         await prisma.settings.upsert({
             where: { id: 'default' },

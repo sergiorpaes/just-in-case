@@ -40,4 +40,5 @@ model Settings {
   prod_pk        String?
   prod_sk        String?
   admin_password String @default("admin")
+  whatsapp       String? @default("")
 }
