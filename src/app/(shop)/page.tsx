@@ -1,5 +1,6 @@
 import Store from "@/components/Store";
 import ShopHeader from "@/components/ShopHeader";
+import ShopFooter from "@/components/ShopFooter";
 import prisma from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -22,7 +23,7 @@ export default async function Home() {
 
   return (
     <div className="space-y-6">
-      <ShopHeader whatsapp={settings?.whatsapp} />
+      <ShopHeader />
 
       {products.length === 0 && (
         <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg text-sm text-center">
@@ -31,6 +32,8 @@ export default async function Home() {
       )}
 
       <Store products={products as any} />
+
+      <ShopFooter whatsapp={settings?.whatsapp} />
     </div>
   );
 }
