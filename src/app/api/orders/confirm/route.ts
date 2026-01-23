@@ -1,42 +1,35 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
-const dataDir = path.join(process.cwd(), 'data');
-const productsPath = path.join(dataDir, 'products.json');
-const ordersPath = path.join(dataDir, 'orders.json');
-
-async function getProducts() {
-    const data = await fs.readFile(productsPath, 'utf8');
-    return JSON.parse(data);
-}
-
-async function saveProducts(products: any[]) {
-    await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
-}
-
-async function saveOrder(order: any) {
-    const data = await fs.readFile(ordersPath, 'utf8');
-    const orders = JSON.parse(data);
-    // Check dupe
-    if (orders.find((o: any) => o.id === order.id)) return;
-    orders.push(order);
-    await fs.writeFile(ordersPath, JSON.stringify(orders, null, 2));
-}
+import prisma from '@/lib/prisma';
 
 async function getStripeKey() {
     try {
-        const data = await fs.readFile(settingsPath, 'utf8');
-        const settings = JSON.parse(data);
-        return settings.mode === 'test' ? settings.test_sk : settings.prod_sk;
+        // Fetch from DB
+        let settings = await prisma.settings.findUnique({
+            where: { id: 'default' }
+        });
+
+        // Initialize object if null, to allow Env override logic to work safely
+        if (!settings) settings = {} as any;
+
+        const env = process.env;
+        const mode = env.NEXT_PUBLIC_APP_MODE || settings?.mode || 'test';
+
+        let sk = '';
+        if (mode === 'test') {
+            sk = env.STRIPE_TEST_SK || settings?.test_sk || '';
+        } else {
+            sk = env.STRIPE_PROD_SK || settings?.prod_sk || '';
+        }
+
+        return sk;
     } catch {
         return process.env.STRIPE_SECRET_KEY; // Fallback
     }
 }
 
 export async function POST(req: Request) {
+    // 1. Get Stripe Key from DB + Env
     const key = await getStripeKey();
     if (!key) return NextResponse.json({ error: 'Stripe Config Missing' }, { status: 500 });
 
@@ -53,25 +46,40 @@ export async function POST(req: Request) {
         const itemsMeta = session.metadata?.items;
         if (itemsMeta) {
             const items = JSON.parse(itemsMeta); // { "p1": 2, "p3": 1 }
-            const products = await getProducts();
 
-            // Deduct stock
-            for (const [id, qty] of Object.entries(items)) {
-                const p = products.find((p: any) => p.id === id);
-                if (p) {
-                    p.stock = Math.max(0, p.stock - (qty as number));
+            // 2. Transaction: Deduct Stock & Save Order
+            await prisma.$transaction(async (tx: any) => {
+                // Deduct stock for each item
+                for (const [id, qty] of Object.entries(items)) {
+                    // Decrement stock, but don't let it go below 0 (optional check or use logic)
+                    // Prisma doesn't have a simple "decrement but min 0" atomic op without raw SQL or check.
+                    // We'll fetch current first to be safe or use simple decrement.
+                    // Simple decrement is safer for concurrency if we trust the check.
+                    // For now, let's just do an update.
+                    const product = await tx.product.findUnique({ where: { id } });
+                    if (product) {
+                        const newStock = Math.max(0, product.stock - (qty as number));
+                        await tx.product.update({
+                            where: { id },
+                            data: { stock: newStock }
+                        });
+                    }
                 }
-            }
-            await saveProducts(products);
 
-            // Save Order
-            await saveOrder({
-                id: session.id,
-                date: new Date().toISOString(),
-                items: items,
-                total: session.amount_total ? session.amount_total / 100 : 0,
-                method: 'stripe',
-                status: 'paid'
+                // Create Order
+                // Check if exists first to be idempotent
+                const existing = await tx.order.findUnique({ where: { id: session.id } });
+                if (!existing) {
+                    await tx.order.create({
+                        data: {
+                            id: session.id,
+                            total: session.amount_total ? session.amount_total / 100 : 0,
+                            status: 'paid',
+                            method: 'stripe',
+                            items: items, // Saved as Json
+                        }
+                    });
+                }
             });
         }
 

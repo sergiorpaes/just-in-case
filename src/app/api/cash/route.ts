@@ -1,54 +1,46 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import prisma from '@/lib/prisma';
 
 export async function POST(req: Request) {
     try {
         const { items, total } = await req.json();
-        const dataDir = path.join(process.cwd(), 'data');
-        const productsPath = path.join(dataDir, 'products.json');
-        const ordersPath = path.join(dataDir, 'orders.json');
 
-        // Read current data
-        const productsData = JSON.parse(await fs.readFile(productsPath, 'utf8'));
-        const ordersData = JSON.parse(await fs.readFile(ordersPath, 'utf8'));
+        // Transaction: Check Stock -> Deduct -> Create Order
+        await prisma.$transaction(async (tx: any) => {
+            for (const item of items) {
+                const product = await tx.product.findUnique({ where: { id: item.id } });
 
-        // Update stock
-        for (const item of items) {
-            const productIndex = productsData.findIndex((p: any) => p.id === item.id);
-            if (productIndex > -1) {
-                if (productsData[productIndex].stock < item.quantity) {
-                    return NextResponse.json({ error: `Not enough stock for ${item.name}` }, { status: 400 });
+                if (!product) {
+                    throw new Error(`Product ${item.id} not found`);
                 }
-                productsData[productIndex].stock -= item.quantity;
+
+                if (product.stock < item.quantity) {
+                    throw new Error(`Not enough stock for ${item.name}`);
+                }
+
+                await tx.product.update({
+                    where: { id: item.id },
+                    data: { stock: product.stock - item.quantity }
+                });
             }
-        }
 
-        // Record order
-        const newOrder = {
-            id: Date.now().toString(),
-            date: new Date().toISOString(),
-            items,
-            total,
-            method: 'cash',
-            status: 'pending_payment' // Cash put in box?
-        };
-        ordersData.push(newOrder);
+            // Create Order
+            await tx.order.create({
+                data: {
+                    id: Date.now().toString(),
+                    date: new Date().toISOString(),
+                    total,
+                    status: 'pending_payment',
+                    method: 'cash',
+                    items: items // Json type
+                }
+            });
+        });
 
-        // Write back
-        try {
-            await fs.writeFile(productsPath, JSON.stringify(productsData, null, 2));
-            await fs.writeFile(ordersPath, JSON.stringify(ordersData, null, 2));
-        } catch (writeError) {
-            console.error("Warning: Failed to save cash order to disk (likely Read-Only FS). Order processed in memory only.", writeError);
-            // In a real app we'd use a database. 
-            // Here we allow it to "succeed" so the user isn't blocked, but data won't persist on Netlify restart.
-        }
-
-        return NextResponse.json({ success: true, orderId: newOrder.id });
+        return NextResponse.json({ success: true, orderId: 'cash-' + Date.now() });
 
     } catch (err: any) {
-        console.error(err);
-        return NextResponse.json({ error: 'Failed to process cash order' }, { status: 500 });
+        console.error("Cash order error:", err);
+        return NextResponse.json({ error: err.message || 'Failed to process cash order' }, { status: 500 });
     }
 }

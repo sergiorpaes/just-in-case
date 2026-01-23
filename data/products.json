@@ -16,14 +16,6 @@
     "stock": 4
   },
   {
-    "id": "p4",
-    "name": "Sleep Mask",
-    "description": "Silk, comfortable and light-blocking.",
-    "price": 5,
-    "image": "/images/mask.png",
-    "stock": 7
-  },
-  {
     "id": "p5",
     "name": "Mineral Water",
     "description": "Still water, 500ml glass bottle.",

@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
+import prisma from '@/lib/prisma';
 
 export async function GET() {
     let settings = { mode: 'test', test_pk: '', prod_pk: '' };
     try {
-        const data = await fs.readFile(settingsPath, 'utf8');
-        settings = JSON.parse(data);
+        const dbSettings = await prisma.settings.findUnique({ where: { id: 'default' } });
+        if (dbSettings) {
+            settings = {
+                ...settings,
+                mode: dbSettings.mode,
+                test_pk: dbSettings.test_pk || '',
+                prod_pk: dbSettings.prod_pk || ''
+            };
+        }
     } catch (e) {
-        // Ignore file read error, fall back to env or defaults
+        // Ignore db error, fall back to env or defaults
     }
 
     // ENV VARS OVERRIDE

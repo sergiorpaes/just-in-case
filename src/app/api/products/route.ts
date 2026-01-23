@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import prisma from '@/lib/prisma';
 
 export async function GET() {
     try {
-        const jsonDirectory = path.join(process.cwd(), 'data');
-        const fileContents = await fs.readFile(path.join(jsonDirectory, 'products.json'), 'utf8');
-        const products = JSON.parse(fileContents);
+        const products = await prisma.product.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
         return NextResponse.json(products);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to load products' }, { status: 500 });
