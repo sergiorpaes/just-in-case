@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Package, Home, Settings } from "lucide-react";
+import { Package, Home, Settings, QrCode } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import LogoutButton from "../components/LogoutButton";
@@ -18,22 +18,25 @@ export default async function AdminLayout({
 
     return (
         <>
-            <div className="md:hidden flex items-center justify-center min-h-screen bg-gray-100 p-6 text-center">
+            <div className="md:hidden flex items-center justify-center min-h-screen bg-gray-100 p-6 text-center print:hidden">
                 <div>
                     <h1 className="text-xl font-bold text-gray-800 mb-2">Desktop Only</h1>
                     <p className="text-gray-600">Please access the Admin Panel from a desktop computer.</p>
                 </div>
             </div>
 
-            <div className="hidden md:flex min-h-screen bg-gray-100 text-gray-900 font-sans">
+            <div className="hidden md:flex print:flex min-h-screen bg-gray-100 text-gray-900 font-sans">
                 {/* Sidebar */}
-                <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+                <aside className="w-64 bg-white border-r border-gray-200 flex flex-col print:hidden">
                     <div className="p-6 border-b border-gray-100">
                         <span className="text-xl font-bold text-gray-800">Admin Panel</span>
                     </div>
                     <nav className="flex-1 p-4 space-y-2">
                         <Link href="/507f191e-810c-41ce-96b9-a9a7a9e33b0d" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-100 font-medium text-gray-900">
                             <Package size={20} /> Products
+                        </Link>
+                        <Link href="/507f191e-810c-41ce-96b9-a9a7a9e33b0d/setup" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                            <QrCode size={20} /> Setup QR Code
                         </Link>
                         <Link href="/" target="_blank" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900">
                             <Home size={20} /> View Storefront

@@ -61,7 +61,7 @@ export default async function RootLayout({
         {children}
 
         {isTestMode && (
-          <div className="fixed bottom-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded shadow-md z-[60] opacity-80 pointer-events-none">
+          <div className="fixed bottom-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded shadow-md z-[60] opacity-80 pointer-events-none print:hidden">
             TEST MODE
           </div>
         )}
