@@ -13,6 +13,10 @@ export const locales = {
         welcome_title: "Just in Case",
         welcome_message: "Just in case you need something…",
         checkout_secure_msg: "Pay securely by card — cash is also OK!",
+        success_title: "Thank You!",
+        success_message: "Your order has been confirmed.",
+        success_cash_reminder: "If you paid cash, please ensure you leave the exact amount in the designated box.",
+        back_to_store: "Back to Store"
     },
     pt: {
         your_essentials: "Seus Essenciais",
@@ -28,6 +32,10 @@ export const locales = {
         welcome_title: "Just in Case",
         welcome_message: "Caso você precise de algo...",
         checkout_secure_msg: "Pague com segurança com cartão — dinheiro também é aceito!",
+        success_title: "Muito Obrigado!",
+        success_message: "Seu pedido foi confirmado.",
+        success_cash_reminder: "Se pagou em dinheiro, por favor deixe a quantia exata na caixa.",
+        back_to_store: "Voltar à Loja"
     },
     es: {
         your_essentials: "Tus Esenciales",
@@ -43,6 +51,10 @@ export const locales = {
         welcome_title: "Just in Case",
         welcome_message: "Por si necesitas algo…",
         checkout_secure_msg: "Paga seguro con tarjeta — ¡efectivo también vale!",
+        success_title: "¡Gracias!",
+        success_message: "Tu pedido ha sido confirmado.",
+        success_cash_reminder: "Si pagaste en efectivo, por favor deja la cantidad exacta en la caja.",
+        back_to_store: "Volver a la Tienda"
     },
     fr: {
         your_essentials: "Vos Essentiels",
@@ -58,6 +70,10 @@ export const locales = {
         welcome_title: "Just in Case",
         welcome_message: "Au cas où vous auriez besoin de quelque chose…",
         checkout_secure_msg: "Payez en toute sécurité par carte — les espèces sont aussi acceptées !",
+        success_title: "Merci !",
+        success_message: "Votre commande a été confirmée.",
+        success_cash_reminder: "Si vous avez payé en espèces, veuillez laisser le montant exact dans la boîte.",
+        back_to_store: "Retour au Magasin"
     }
 };
 

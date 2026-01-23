@@ -5,10 +5,13 @@ import { CheckCircle, Loader2 } from "lucide-react";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+
 function SuccessContent() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session_id');
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+    const { t } = useLanguage();
 
     useEffect(() => {
         if (sessionId) {
@@ -42,10 +45,10 @@ function SuccessContent() {
                     </div>
 
                     <div className="space-y-2">
-                        <h1 className="text-3xl font-handwriting text-primary">Thank You!</h1>
-                        <p className="text-stone-600">Your order has been confirmed.</p>
+                        <h1 className="text-3xl font-handwriting text-primary">{t('success_title')}</h1>
+                        <p className="text-stone-600">{t('success_message')}</p>
                         <p className="text-sm text-stone-500 max-w-xs mx-auto">
-                            If you paid cash, please ensure you leave the exact amount in the designated box.
+                            {t('success_cash_reminder')}
                         </p>
                     </div>
 
@@ -54,7 +57,7 @@ function SuccessContent() {
                             href="/"
                             className="bg-primary text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition shadow-lg"
                         >
-                            Back to Store
+                            {t('back_to_store')}
                         </Link>
                     </div>
                 </>
