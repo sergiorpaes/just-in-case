@@ -156,7 +156,8 @@ export default function Store({ products }: { products: Product[] }) {
                                 </div>
                             </div>
                         </div>
-                    })}
+                    );
+                })}
             </div>
 
             {/* Floating Cart Button */}
