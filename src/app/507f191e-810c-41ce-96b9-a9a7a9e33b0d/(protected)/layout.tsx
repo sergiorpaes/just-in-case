@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Package, Home, Settings, QrCode } from "lucide-react";
+import { Package, Home, Settings, QrCode, ShoppingBag } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import LogoutButton from "../components/LogoutButton";
@@ -32,8 +32,11 @@ export default async function AdminLayout({
                         <span className="text-xl font-bold text-gray-800">Admin Panel</span>
                     </div>
                     <nav className="flex-1 p-4 space-y-2">
-                        <Link href="/507f191e-810c-41ce-96b9-a9a7a9e33b0d" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-100 font-medium text-gray-900">
+                        <Link href="/507f191e-810c-41ce-96b9-a9a7a9e33b0d" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900">
                             <Package size={20} /> Products
+                        </Link>
+                        <Link href="/507f191e-810c-41ce-96b9-a9a7a9e33b0d/orders" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                            <ShoppingBag size={20} /> Orders
                         </Link>
                         <Link href="/507f191e-810c-41ce-96b9-a9a7a9e33b0d/setup" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900">
                             <QrCode size={20} /> Setup QR Code
