@@ -25,7 +25,6 @@ export async function POST(req: Request) {
                 stock: Number(body.stock) || 0,
                 image: body.image || '',
                 nameI18n: body.nameI18n || {},
-                nameI18n: body.nameI18n || {},
                 descriptionI18n: body.descriptionI18n || {},
                 isActive: body.isActive !== undefined ? body.isActive : true
             }
@@ -50,7 +49,6 @@ export async function PUT(req: Request) {
                 price: Number(body.price) || 0,
                 stock: Number(body.stock) || 0,
                 image: body.image || '',
-                nameI18n: body.nameI18n || {},
                 nameI18n: body.nameI18n || {},
                 descriptionI18n: body.descriptionI18n || {},
                 isActive: body.isActive !== undefined ? body.isActive : true
