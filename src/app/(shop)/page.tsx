@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 async function getProducts() {
   try {
     const products = await prisma.product.findMany({
+      where: { isActive: true },
       orderBy: { createdAt: 'desc' }
     });
     return products.sort((a, b) => Number(a.price) - Number(b.price));

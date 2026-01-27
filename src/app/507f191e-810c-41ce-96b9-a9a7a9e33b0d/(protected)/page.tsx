@@ -11,6 +11,7 @@ type Product = {
     price: number;
     stock: number;
     image: string;
+    isActive: boolean;
 };
 
 export default function AdminDashboard() {
@@ -45,6 +46,28 @@ export default function AdminDashboard() {
         }
     };
 
+    const toggleStatus = async (id: string, currentStatus: boolean) => {
+        try {
+            // Optimistic update
+            setProducts(products.map(p => p.id === id ? { ...p, isActive: !currentStatus } : p));
+
+            const res = await fetch(`/api/admin/products`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id, isActive: !currentStatus })
+            });
+
+            if (!res.ok) {
+                // Revert on failure
+                setProducts(products.map(p => p.id === id ? { ...p, isActive: currentStatus } : p));
+                alert("Failed to update status");
+            }
+        } catch (error) {
+            setProducts(products.map(p => p.id === id ? { ...p, isActive: currentStatus } : p));
+            alert("Error updating status");
+        }
+    };
+
     if (loading) return <div className="p-8">Loading products...</div>;
 
     return (
@@ -70,6 +93,7 @@ export default function AdminDashboard() {
                             <th className="px-6 py-4 font-semibold text-gray-700">Name</th>
                             <th className="px-6 py-4 font-semibold text-gray-700 w-32">Price</th>
                             <th className="px-6 py-4 font-semibold text-gray-700 w-32">Stock</th>
+                            <th className="px-6 py-4 font-semibold text-gray-700 w-24 text-center">Active</th>
                             <th className="px-6 py-4 font-semibold text-gray-700 w-24 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -94,6 +118,14 @@ export default function AdminDashboard() {
                                         }`}>
                                         {product.stock} in stock
                                     </span>
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                    <input
+                                        type="checkbox"
+                                        checked={product.isActive}
+                                        onChange={() => toggleStatus(product.id, product.isActive)}
+                                        className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300 cursor-pointer"
+                                    />
                                 </td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">

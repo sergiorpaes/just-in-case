@@ -25,7 +25,9 @@ export async function POST(req: Request) {
                 stock: Number(body.stock) || 0,
                 image: body.image || '',
                 nameI18n: body.nameI18n || {},
-                descriptionI18n: body.descriptionI18n || {}
+                nameI18n: body.nameI18n || {},
+                descriptionI18n: body.descriptionI18n || {},
+                isActive: body.isActive !== undefined ? body.isActive : true
             }
         });
 
@@ -49,7 +51,9 @@ export async function PUT(req: Request) {
                 stock: Number(body.stock) || 0,
                 image: body.image || '',
                 nameI18n: body.nameI18n || {},
-                descriptionI18n: body.descriptionI18n || {}
+                nameI18n: body.nameI18n || {},
+                descriptionI18n: body.descriptionI18n || {},
+                isActive: body.isActive !== undefined ? body.isActive : true
             }
         });
 
@@ -57,5 +61,23 @@ export async function PUT(req: Request) {
     } catch (e) {
         console.error(e);
         return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
+    }
+}
+
+export async function PATCH(req: Request) {
+    try {
+        const body = await req.json();
+
+        const updatedProduct = await prisma.product.update({
+            where: { id: body.id },
+            data: {
+                isActive: body.isActive
+            }
+        });
+
+        return NextResponse.json(updatedProduct);
+    } catch (e) {
+        console.error(e);
+        return NextResponse.json({ error: 'Failed to update product status' }, { status: 500 });
     }
 }
