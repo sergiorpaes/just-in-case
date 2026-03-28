@@ -121,7 +121,7 @@ export default function Store({ products }: { products: Product[] }) {
                 setTabItems(newTabItems);
                 setCart([]); // Clear cart after adding to tab
                 setIsCartOpen(false);
-                alert(t('added_to_tab_msg'));
+                alert(t('added_to_basket_msg'));
             } else {
                 alert(t('error_generic'));
             }
@@ -247,8 +247,8 @@ export default function Store({ products }: { products: Product[] }) {
                         <div className="flex items-center gap-2 text-primary">
                             <ShoppingBag size={20} />
                             <div className="flex flex-col">
-                                <span className="font-bold leading-none">{t('tab_total')}</span>
-                                <span className="text-[10px] text-primary/60 font-bold uppercase tracking-wider">{t('view_tab')}</span>
+                                <span className="font-bold leading-none">{t('stay_basket_total')}</span>
+                                <span className="text-[10px] text-primary/60 font-bold uppercase tracking-wider">{t('view_stay_basket')}</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
@@ -330,7 +330,7 @@ export default function Store({ products }: { products: Product[] }) {
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2 text-primary border-b border-primary/10 pb-2">
                                                 <ShoppingBag size={16} />
-                                                <h3 className="text-sm font-bold uppercase tracking-wider">{t('tab_total')}</h3>
+                                                <h3 className="text-sm font-bold uppercase tracking-wider">{t('stay_basket_total')}</h3>
                                             </div>
                                             {tabItems.map((item) => {
                                                 const localizedName = (item.nameI18n && item.nameI18n[language]) || item.name;
@@ -400,7 +400,7 @@ export default function Store({ products }: { products: Product[] }) {
                                     onClick={handleAddToTab}
                                     className="w-full py-3.5 bg-stone-800 text-white rounded-xl font-bold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50 transition-all shadow-md active:scale-95"
                                 >
-                                    <ShoppingBag size={18} /> {t('add_to_tab')}
+                                    <ShoppingBag size={18} /> {t('add_to_stay_basket')}
                                 </button>
                                 
                                 <div className="flex items-center gap-3 my-2">
