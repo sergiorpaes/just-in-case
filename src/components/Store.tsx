@@ -132,6 +132,31 @@ export default function Store({ products }: { products: Product[] }) {
             setIsProcessing(false);
         }
     };
+    const handleRemoveFromTab = async (productId: string) => {
+        if (!guestId) return;
+        setIsProcessing(true);
+
+        const newTabItems = tabItems.filter(item => item.id !== productId);
+
+        try {
+            const response = await fetch("/api/tab", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ guestId, items: newTabItems }),
+            });
+
+            if (response.ok) {
+                setTabItems(newTabItems);
+            } else {
+                alert(t('error_generic'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert(t('error_generic'));
+        } finally {
+            setIsProcessing(false);
+        }
+    };
 
     const handleStripeCheckout = async () => {
         setIsProcessing(true);
@@ -310,12 +335,21 @@ export default function Store({ products }: { products: Product[] }) {
                                             {tabItems.map((item) => {
                                                 const localizedName = (item.nameI18n && item.nameI18n[language]) || item.name;
                                                 return (
-                                                    <div key={`tab-${item.id}`} className="flex justify-between items-center bg-stone-50 p-2 rounded-lg opacity-80">
+                                                    <div key={`tab-${item.id}`} className="flex justify-between items-center bg-stone-50 p-2 rounded-lg opacity-80 group relative">
                                                         <div className="flex flex-col">
                                                             <span className="font-medium text-sm">{localizedName}</span>
                                                             <span className="text-xs text-stone-500">€{item.price.toFixed(2)} x {item.quantity}</span>
                                                         </div>
-                                                        <span className="font-mono text-sm">€{(item.price * item.quantity).toFixed(2)}</span>
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="font-mono text-sm">€{(item.price * item.quantity).toFixed(2)}</span>
+                                                            <button 
+                                                                onClick={() => handleRemoveFromTab(item.id)}
+                                                                disabled={isProcessing}
+                                                                className="p-1 text-stone-400 hover:text-red-500 transition-colors disabled:opacity-30"
+                                                            >
+                                                                <X size={14} />
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 );
                                             })}
