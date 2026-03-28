@@ -215,12 +215,23 @@ export default function Store({ products }: { products: Product[] }) {
         <>
             <div className="grid grid-cols-1 gap-6 pb-24">
                 {tabTotal > 0 && (
-                    <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex justify-between items-center mb-2">
+                    <div 
+                        onClick={() => setIsCartOpen(true)}
+                        className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex justify-between items-center mb-2 cursor-pointer hover:bg-primary/10 transition active:scale-[0.98]"
+                    >
                         <div className="flex items-center gap-2 text-primary">
                             <ShoppingBag size={20} />
-                            <span className="font-bold">{t('tab_total')}</span>
+                            <div className="flex flex-col">
+                                <span className="font-bold leading-none">{t('tab_total')}</span>
+                                <span className="text-[10px] text-primary/60 font-bold uppercase tracking-wider">{t('view_tab')}</span>
+                            </div>
                         </div>
-                        <span className="font-bold text-lg">€{tabTotal.toFixed(2)}</span>
+                        <div className="flex items-center gap-3">
+                            <span className="font-bold text-lg">€{tabTotal.toFixed(2)}</span>
+                            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg">
+                                <CreditCard size={16} />
+                            </div>
+                        </div>
                     </div>
                 )}
 
