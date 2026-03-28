@@ -70,6 +70,7 @@ export async function POST(req: Request) {
             cancel_url: `${req.headers.get('origin')}/`,
             locale: 'en',
             metadata: {
+                guestId: body.guestId || '',
                 // We'll store a simplified JSON string of items to process stock later
                 // Format: { "p1": 2, "p3": 1 }
                 items: JSON.stringify(items.reduce((acc: any, item: any) => {

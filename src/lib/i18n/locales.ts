@@ -16,7 +16,12 @@ export const locales = {
         success_title: "Thank You!",
         success_message: "Your order has been confirmed.",
         success_cash_reminder: "If you paid cash, please ensure you leave the exact amount in the designated box.",
-        back_to_store: "Back to Store"
+        back_to_store: "Back to Store",
+        add_to_tab: "Add to my Tab",
+        tab_total: "My Tab",
+        pay_at_checkout: "Pay at Checkout",
+        added_to_tab_msg: "Added to your account!",
+        view_tab: "View My Tab"
     },
     pt: {
         your_essentials: "Seus Essenciais",
@@ -35,7 +40,12 @@ export const locales = {
         success_title: "Muito Obrigado!",
         success_message: "Seu pedido foi confirmado.",
         success_cash_reminder: "Se pagou em dinheiro, por favor deixe a quantia exata na caixa.",
-        back_to_store: "Voltar à Loja"
+        back_to_store: "Voltar à Loja",
+        add_to_tab: "Adicionar à conta",
+        tab_total: "Minha conta",
+        pay_at_checkout: "Pagar no checkout",
+        added_to_tab_msg: "Adicionado à sua conta!",
+        view_tab: "Ver minha conta"
     },
     es: {
         your_essentials: "Tus Esenciales",
@@ -54,7 +64,12 @@ export const locales = {
         success_title: "¡Gracias!",
         success_message: "Tu pedido ha sido confirmado.",
         success_cash_reminder: "Si pagaste en efectivo, por favor deja la cantidad exacta en la caja.",
-        back_to_store: "Volver a la Tienda"
+        back_to_store: "Volver a la Tienda",
+        add_to_tab: "Añadir a mi cuenta",
+        tab_total: "Mi cuenta",
+        pay_at_checkout: "Pagar al checkout",
+        added_to_tab_msg: "¡Añadido a tu cuenta!",
+        view_tab: "Ver mi cuenta"
     },
     fr: {
         your_essentials: "Vos Essentiels",
@@ -73,7 +88,12 @@ export const locales = {
         success_title: "Merci !",
         success_message: "Votre commande a été confirmée.",
         success_cash_reminder: "Si vous avez payé en espèces, veuillez laisser le montant exact dans la boîte.",
-        back_to_store: "Retour au Magasin"
+        back_to_store: "Retour au Magasin",
+        add_to_tab: "Ajouter à mon compte",
+        tab_total: "Mon compte",
+        pay_at_checkout: "Payer au checkout",
+        added_to_tab_msg: "Ajouté à votre compte !",
+        view_tab: "Voir mon compte"
     },
     de: {
         your_essentials: "Ihre Essentials",
@@ -92,7 +112,12 @@ export const locales = {
         success_title: "Danke!",
         success_message: "Ihre Bestellung wurde bestätigt.",
         success_cash_reminder: "Wenn Sie bar bezahlt haben, legen Sie bitte den genauen Betrag in die Box.",
-        back_to_store: "Zurück zum Laden"
+        back_to_store: "Zurück zum Laden",
+        add_to_tab: "Auf mein Konto setzen",
+        tab_total: "Mein Konto",
+        pay_at_checkout: "Am Checkout bezahlen",
+        added_to_tab_msg: "Ihrem Konto hinzugefügt!",
+        view_tab: "Mein Konto ansehen"
     },
     nl: {
         your_essentials: "Uw benodigdheden",
@@ -111,7 +136,12 @@ export const locales = {
         success_title: "Dank u!",
         success_message: "Uw bestelling is bevestigd.",
         success_cash_reminder: "Als u contant heeft betaald, leg dan het exacte bedrag in de doos.",
-        back_to_store: "Terug naar winkel"
+        back_to_store: "Terug naar winkel",
+        add_to_tab: "Voeg toe à account",
+        tab_total: "Mijn account",
+        pay_at_checkout: "Betalen bij checkout",
+        added_to_tab_msg: "Toegevoegd aan account!",
+        view_tab: "Mijn account bekijken"
     },
     ru: {
         your_essentials: "Ваши товары",
@@ -130,7 +160,12 @@ export const locales = {
         success_title: "Спасибо!",
         success_message: "Ваш заказ подтвержден.",
         success_cash_reminder: "Если вы платили наличными, пожалуйста, оставьте точную сумму в коробке.",
-        back_to_store: "Вернуться в магазин"
+        back_to_store: "Вернуться в магазин",
+        add_to_tab: "Добавить в счет",
+        tab_total: "Мой счет",
+        pay_at_checkout: "Оплатить при выезде",
+        added_to_tab_msg: "Добавлено в счет!",
+        view_tab: "Посмотреть мой счет"
     }
 };
 

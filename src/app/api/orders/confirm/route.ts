@@ -84,6 +84,16 @@ export async function POST(req: Request) {
                             items: items, // Saved as Json
                         }
                     });
+
+                    // 3. Clear Tab if guestId exists
+                    const guestId = session.metadata?.guestId;
+                    if (guestId) {
+                        try {
+                            await tx.tab.delete({ where: { guestId } });
+                        } catch (e) {
+                            // Ignore if tab already deleted or not found
+                        }
+                    }
                 }
             });
         }

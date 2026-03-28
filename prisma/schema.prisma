@@ -45,3 +45,12 @@ model Settings {
   admin_password String @default("admin")
   whatsapp       String? @default("")
 }
+
+model Tab {
+  id        String   @id @default(cuid())
+  guestId   String   @unique
+  items     Json     // [{ id, name, price, quantity }]
+  total     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
