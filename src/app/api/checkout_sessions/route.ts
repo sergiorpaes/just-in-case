@@ -10,24 +10,33 @@ async function getStripeKey() {
     let testSk = '';
     let prodSk = '';
 
-    // 1. Try reading settings.json (Dev)
+    // 1. Try reading from Database
     try {
-        const data = await fs.readFile(settingsPath, 'utf8');
-        const settings = JSON.parse(data);
-        mode = settings.mode || 'test';
-        testSk = settings.test_sk || '';
-        prodSk = settings.prod_sk || '';
+        const prisma = (await import('@/lib/prisma')).default;
+        const dbSettings = await prisma.settings.findUnique({ where: { id: 'default' } });
+        if (dbSettings) {
+            mode = dbSettings.mode || 'test';
+            testSk = dbSettings.test_sk || '';
+            prodSk = dbSettings.prod_sk || '';
+        }
     } catch {
-        // Ignore missing file
+        // Ignore DB errors
     }
 
-    // 2. Override with Environment Variables (Prod/Netlify)
-    if (process.env.NEXT_PUBLIC_APP_MODE) mode = process.env.NEXT_PUBLIC_APP_MODE;
-    if (process.env.STRIPE_TEST_SK) testSk = process.env.STRIPE_TEST_SK;
-    if (process.env.STRIPE_PROD_SK) prodSk = process.env.STRIPE_PROD_SK;
+    // 2. Fallbacks (Environment Variables)
+    if (!mode || mode === 'test' && !testSk || mode === 'prod' && !prodSk) {
+        if (!mode || testSk === '' && prodSk === '') {
+            mode = process.env.NEXT_PUBLIC_APP_MODE || mode;
+        }
+    }
+    
+    // Better fallback logic
+    let tempMode = mode;
+    let tempTestSk = testSk || process.env.STRIPE_TEST_SK || '';
+    let tempProdSk = prodSk || process.env.STRIPE_PROD_SK || '';
 
     // 3. Select Key
-    const key = mode === 'test' ? testSk : prodSk;
+    let key = tempMode === 'test' ? tempTestSk : tempProdSk;
 
     // 4. Ultimate Fallback (Legacy)
     if (!key || key.includes('PLACEHOLDER')) {

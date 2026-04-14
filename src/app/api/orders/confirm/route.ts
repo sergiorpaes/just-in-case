@@ -13,13 +13,13 @@ async function getStripeKey() {
         if (!settings) settings = {} as any;
 
         const env = process.env;
-        const mode = env.NEXT_PUBLIC_APP_MODE || settings?.mode || 'test';
+        const mode = settings?.mode || env.NEXT_PUBLIC_APP_MODE || 'test';
 
         let sk = '';
         if (mode === 'test') {
-            sk = env.STRIPE_TEST_SK || settings?.test_sk || '';
+            sk = settings?.test_sk || env.STRIPE_TEST_SK || '';
         } else {
-            sk = env.STRIPE_PROD_SK || settings?.prod_sk || '';
+            sk = settings?.prod_sk || env.STRIPE_PROD_SK || '';
         }
 
         return sk;

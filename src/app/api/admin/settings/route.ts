@@ -18,16 +18,16 @@ async function getSettings() {
         });
     }
 
-    // 2. Override with ENV VARS (security best practice: Environment > Database)
+    // 2. Override: Database > Environment (Allows UI to work)
     const settings = { ...dbSettings };
     const env = process.env;
 
-    if (env.NEXT_PUBLIC_APP_MODE) settings.mode = env.NEXT_PUBLIC_APP_MODE;
-    if (env.NEXT_PUBLIC_STRIPE_TEST_PK) settings.test_pk = env.NEXT_PUBLIC_STRIPE_TEST_PK;
-    if (env.STRIPE_TEST_SK) settings.test_sk = env.STRIPE_TEST_SK;
-    if (env.NEXT_PUBLIC_STRIPE_PROD_PK) settings.prod_pk = env.NEXT_PUBLIC_STRIPE_PROD_PK;
-    if (env.STRIPE_PROD_SK) settings.prod_sk = env.STRIPE_PROD_SK;
-    if (env.ADMIN_PASSWORD) settings.admin_password = env.ADMIN_PASSWORD;
+    if (!settings.mode) settings.mode = env.NEXT_PUBLIC_APP_MODE || 'test';
+    if (!settings.test_pk) settings.test_pk = env.NEXT_PUBLIC_STRIPE_TEST_PK || '';
+    if (!settings.test_sk) settings.test_sk = env.STRIPE_TEST_SK || '';
+    if (!settings.prod_pk) settings.prod_pk = env.NEXT_PUBLIC_STRIPE_PROD_PK || '';
+    if (!settings.prod_sk) settings.prod_sk = env.STRIPE_PROD_SK || '';
+    if (!settings.admin_password) settings.admin_password = env.ADMIN_PASSWORD || 'admin';
 
     return settings;
 }
