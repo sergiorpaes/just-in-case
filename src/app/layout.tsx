@@ -37,13 +37,15 @@ export const metadata: Metadata = {
 
 async function getIsTestMode() {
   try {
-    const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
-    const data = await fs.readFile(settingsPath, 'utf8');
-    const settings = JSON.parse(data);
-    return settings.mode === 'test';
+    const prisma = (await import('@/lib/prisma')).default;
+    const dbSettings = await prisma.settings.findUnique({ where: { id: 'default' } });
+    if (dbSettings) {
+      return dbSettings.mode === 'test';
+    }
   } catch {
-    return false;
+    // Fall back
   }
+  return (process.env.NEXT_PUBLIC_APP_MODE || 'test') === 'test';
 }
 
 export default async function RootLayout({
