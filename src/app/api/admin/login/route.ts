@@ -8,10 +8,19 @@ const settingsPath = path.join(process.cwd(), 'data', 'settings.json');
 export async function POST(req: Request) {
     try {
         const { password } = await req.json();
-        const data = await fs.readFile(settingsPath, 'utf8');
-        const settings = JSON.parse(data);
+        const prisma = (await import('@/lib/prisma')).default;
+        
+        let validPassword = process.env.ADMIN_PASSWORD || 'admin';
+        try {
+            const dbSettings = await prisma.settings.findUnique({ where: { id: 'default' } });
+            if (dbSettings && dbSettings.admin_password) {
+                validPassword = dbSettings.admin_password;
+            }
+        } catch {
+            // Fallback to env
+        }
 
-        if (password === settings.admin_password) {
+        if (password === validPassword) {
             // Set cookie
             const cookieStore = await cookies();
             cookieStore.set('admin_token', 'true', {
