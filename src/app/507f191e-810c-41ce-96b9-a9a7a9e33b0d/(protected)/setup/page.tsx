@@ -144,7 +144,7 @@ export default function SetupPage() {
                             className="w-32 h-32 object-contain mb-1.5"
                         />
                     )}
-                    <p className="text-stone-500 font-mono text-[9px] m-0 leading-none">{url.replace(/^https?:\\/\\//, '')}</p>
+                    <p className="text-stone-500 font-mono text-[9px] m-0 leading-none">{url.replace(/^https?:\/\//, '')}</p>
                 </div>
             </div>
         </>
